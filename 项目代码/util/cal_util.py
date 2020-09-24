@@ -126,7 +126,7 @@ def cal_repeat_rate(orig_paper, orig_modify_paper):
 
 def cal_repeat_rate_0(orig_paper, orig_modify_paper):
     """
-    根据SinHash算法计算论文的重复率
+    根据SinHash算法计算论文的重复率（改进前算法）
     :param orig_paper: 原论文
     :param orig_add_paper: 抄袭论文
     :return:
