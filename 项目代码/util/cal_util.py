@@ -4,6 +4,16 @@ import jieba.analyse
 import numpy as np
 
 from util.config import config
+def hamming_dis(simhash1, simhash2):
+    """
+    计算汉明距离
+    :param simhash1: 第一个字符序列的SimHash值序列，NumPy数组类型
+    :param simhash2: 第二个字符序列的SimHash值序列，NumPy数组类型
+    :return:
+        汉明距离
+    """
+    dis = np.sum(simhash1 != simhash2)
+    return dis
 
 def str2hash(ori_str):
     """
@@ -114,4 +124,51 @@ def cal_repeat_rate(orig_paper, orig_modify_paper):
     result["sentence_num"] = result_index-1
     return result
 
+def cal_repeat_rate_0(orig_paper, orig_modify_paper):
+    """
+    根据SinHash算法计算论文的重复率
+    :param orig_paper: 原论文
+    :param orig_add_paper: 抄袭论文
+    :return:
+        {"repeat_rate": "保留计算结果的字典，包括两篇论文的重复率和重复的段落/
+                        例如，/
+                        {"repeat_rate": 0.87,/
+                         1: ["原文段落1", "抄袭段落1"],/
+                         2: ["原文段落2", "抄袭段落2"],/
+                         .../
+                         }
+                        "
+        }
+    """
+    orig_modify_paper_len, copy_word_num = 0, 0
+    result = {}
+    result_index = 1
+    for orig_modify_div in orig_modify_paper:
+        orig_modify_paper_len += len(orig_modify_div)
+        modify = False  # 记录该段落是否是修改的
+        orig_modify_div_simhash = cal_simhash(orig_modify_div)
+        if orig_modify_div_simhash is None:  # 当返回空值，说明该段落为空，跳过该段落
+            continue
+        if orig_modify_div_simhash == "10":  # 当抄袭论文编码读取失败时，返回-1
+            return -1
+        for orig_div in orig_paper:
+            orig_div_simhash = cal_simhash(orig_div)
+            if orig_div_simhash is None:
+                continue
+            if orig_div_simhash == "10":  # 当原论文编码读取失败时，返回-2
+                return -2
+            try:
+                item_dis = hamming_dis(orig_modify_div_simhash, orig_div_simhash)
+                # print(item_dis)
+                if item_dis <= 17:  # 当汉明距离小于阈值时，则记录为相似段落
+                    result[result_index] = [orig_div, orig_modify_div, item_dis]
+                    result_index += 1
+                    modify = True
+            except Exception as e:
+                print(e)
+                return -3
+        if modify:  # 当该段落相似时，则统计该段落的词数量
+            copy_word_num += len(orig_modify_div)
+    result["repeat_rate"] = copy_word_num/orig_modify_paper_len
+    return result
 
