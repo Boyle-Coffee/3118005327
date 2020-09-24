@@ -1,0 +1,1 @@
+python main.py dataset/orig.txt dataset/orig_0.8_add.txt dataset/ans.txt
