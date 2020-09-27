@@ -2,6 +2,7 @@
 import jieba
 import jieba.analyse
 import numpy as np
+from tqdm import tqdm
 
 from util.config import config
 def hamming_dis(simhash1, simhash2):
@@ -143,7 +144,7 @@ def cal_repeat_rate_0(orig_paper, orig_modify_paper):
     orig_modify_paper_len, copy_word_num = 0, 0
     result = {}
     result_index = 1
-    for orig_modify_div in orig_modify_paper:
+    for orig_modify_div in tqdm(orig_modify_paper):
         orig_modify_paper_len += len(orig_modify_div)
         modify = False  # 记录该段落是否是修改的
         orig_modify_div_simhash = cal_simhash(orig_modify_div)
@@ -170,5 +171,6 @@ def cal_repeat_rate_0(orig_paper, orig_modify_paper):
         if modify:  # 当该段落相似时，则统计该段落的词数量
             copy_word_num += len(orig_modify_div)
     result["repeat_rate"] = copy_word_num/orig_modify_paper_len
+    result['sentence_num'] = result_index-1
     return result
 

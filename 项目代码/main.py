@@ -2,6 +2,7 @@
 import sys
 from util import file_util
 from util import cal_util
+import time
 
 def main():
 
@@ -46,4 +47,6 @@ def main():
         print("错误：在存储结果的时候发生错误，有可能指定的路径不存在")
 
 if __name__=="__main__":
+    start_time = time.time()
     main()
+    print("运行时间："+str(time.time()-start_time))

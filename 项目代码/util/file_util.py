@@ -44,6 +44,7 @@ def save_file(file_path, result):
                 f.writelines("\n----------段落"+str(i+1)+"----------\n")
                 f.writelines("原段落：\n" + result[i + 1][0] + "\n")
                 f.writelines("抄袭段落：\n" + result[i + 1][1] + "\n")
-    except:
+    except Exception as e:
+        print(e.args)
         raise IOError("An error occurred saving the txt file")
 
