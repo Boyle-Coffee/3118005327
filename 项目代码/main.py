@@ -10,8 +10,10 @@ def main():
     args = sys.argv
     if len(args) < 4:
         print("错误：输入参数太少")
+        exit(-1)
     elif len(args) > 4:
         print("错误：输入多余参数")
+        exit(-1)
 
     # 读取文件
     try:
